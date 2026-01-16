@@ -1,7 +1,7 @@
 [submodule "kernel"]
 	path = kernel
-	url = https://github.com/UN1CA/kernel_samsung_sm7150
-	branch = upstream-rel
+	url = https://github.com/mehedihjoy0/android_kernel_samsung_m51
+	branch = lineage-23.0
 [submodule "mkbootimg"]
 	path = mkbootimg
 	url = https://android.googlesource.com/platform/system/tools/mkbootimg
