@@ -1,0 +1,127 @@
+name: Build Kernel for Galaxy M51
+
+on:
+  workflow_dispatch:
+    inputs:
+      clean_build:
+        description: 'Perform clean build'
+        required: false
+        default: false
+        type: boolean
+      enable_kernelsu:
+        description: 'Enable KernelSU integration'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build Kernel for Galaxy M51
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    
+    steps:
+      # Step 1: Checkout this repository (which contains build.sh)
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      
+      # Step 2: Install dependencies needed for build.sh
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential git curl wget tar xz-utils bzip2 unzip \
+            python3 make gcc g++ gcc-aarch64-linux-gnu gcc-arm-linux-gnueabi \
+            libssl-dev libncurses-dev flex bison bc device-tree-compiler \
+            lz4 liblz4-tool rsync kmod cpio libelf-dev dwarves pahole xxd
+      
+      # Step 3: Make build.sh executable
+      - name: Prepare build script
+        run: |
+          chmod +x build.sh
+          echo "Build script is ready"
+      
+      # Step 4: Run build.sh with optional clean flag
+      - name: Build kernel using build.sh
+        id: build
+        run: |
+          echo "Starting kernel build..."
+          
+          # Build command based on inputs
+          BUILD_CMD="./build.sh"
+          if [ "${{ github.event.inputs.clean_build || 'false' }}" = "true" ]; then
+            BUILD_CMD="./build.sh --clean"
+          fi
+          
+          echo "Running: $BUILD_CMD"
+          $BUILD_CMD
+      
+      # Step 5: Prepare timestamp
+      - name: Generate build info
+        id: timestamp
+        run: |
+          echo "date=$(TZ=Asia/Manila date +%Y%m%d-%I%M%p)" >> $GITHUB_OUTPUT
+          echo "timestamp=$(date +%s)" >> $GITHUB_OUTPUT
+      
+      # Step 6: Upload build artifacts
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: kernel-build-${{ steps.timestamp.outputs.date }}
+          path: |
+            build/output/*.zip
+            build/output/build.log
+          retention-days: 30
+      
+      # Step 7: Create GitHub Release
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: "build-${{ steps.timestamp.outputs.date }}"
+          name: "ButterflyKernel_M51 - ${{ steps.timestamp.outputs.date }}"
+          body: |
+            ### Butterfly Kernel for Galaxy M51
+            
+            **Build Information**
+            - Build Date: ${{ steps.timestamp.outputs.date }}
+            - KernelSU: ${{ github.event.inputs.enable_kernelsu || 'false' }}
+            - Clean Build: ${{ github.event.inputs.clean_build || 'false' }}
+            
+            **Notes**
+            * Flash using custom recovery (TWRP/OrangeFox)
+            * Test at your own risk
+            * Backup boot, dtbo before flashing
+            
+            **Installation**
+            1. Download the zip file
+            2. Boot to recovery
+            3. Flash the zip
+            4. Reboot system
+            
+            **Build Details**
+            - Trigger: ${{ github.event_name }}
+            - Actor: @${{ github.actor }}
+            - SHA: ${{ github.sha }}
+          draft: false
+          prerelease: false
+          files: |
+            build/output/*.zip
+            build/output/build.log
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      # Step 8: Build summary
+      - name: Build summary
+        run: |
+          echo "=================================="
+          echo "✅ BUILD COMPLETED SUCCESSFULLY!"
+          echo "=================================="
+          echo "Kernel: Butterfly Kernel for Galaxy M51"
+          echo "Build Date: ${{ steps.timestamp.outputs.date }}"
+          echo "Trigger: ${{ github.event_name }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "=================================="
