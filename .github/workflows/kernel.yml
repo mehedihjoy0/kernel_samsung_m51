@@ -26,7 +26,7 @@ jobs:
     steps:
       # Step 1: Checkout this repository (which contains build.sh)
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1
       
@@ -70,7 +70,7 @@ jobs:
       
       # Step 6: Upload build artifacts
       - name: Upload artifacts
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v6
         with:
           name: kernel-build-${{ steps.timestamp.outputs.date }}
           path: |
