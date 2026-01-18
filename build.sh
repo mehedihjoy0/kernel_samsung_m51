@@ -10,8 +10,8 @@ set -e  # Exit on error
 # ==============================================================================
 # CONFIGURATION
 # ==============================================================================
-KERNEL_SOURCE="https://github.com/mehedihjoy0/android_kernel_samsung_m51"
-KERNEL_BRANCH="lineage-23.0"
+KERNEL_SOURCE="https://github.com/mehedihjoy0/android_kernel_samsung_sm7150"
+KERNEL_BRANCH="m51"
 KERNEL_DEFCONFIG="m51_defconfig"
 
 CLANG_URL="https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/4c6fbc28d3b078a5308894fc175f962bb26a5718/clang-r383902b1.tar.gz"
@@ -151,6 +151,7 @@ build_kernel() {
     
     # Build
     print_step "Configuring with ${KERNEL_DEFCONFIG}..."
+    cat arch/arm64/configs/sdmmagpie_defconfig arch/arm64/configs/sdmmagpie-stock_defconfig arch/arm64/configs/m51.config > arch/arm64/configs/m51_defconfig
     make_kernel "${KERNEL_DEFCONFIG}"
     
     print_step "Compiling with $(nproc) threads..."
