@@ -11,7 +11,7 @@ set -e  # Exit on error
 # CONFIGURATION
 # ==============================================================================
 KERNEL_SOURCE="https://github.com/mehedihjoy0/android_kernel_samsung_sm7150"
-KERNEL_BRANCH="a71"
+KERNEL_BRANCH="m51"
 KERNEL_DEFCONFIG="a71_defconfig"
 
 CLANG_URL="https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/4c6fbc28d3b078a5308894fc175f962bb26a5718/clang-r383902b1.tar.gz"
