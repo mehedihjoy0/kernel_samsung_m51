@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ==============================================================================
-# KERNEL BUILD SCRIPT FOR SAMSUNG GALAXY A71
+# KERNEL BUILD SCRIPT FOR SAMSUNG GALAXY M51
 # Run this locally or in CI
 # ==============================================================================
 
@@ -12,7 +12,7 @@ set -e  # Exit on error
 # ==============================================================================
 KERNEL_SOURCE="https://github.com/mehedihjoy0/android_kernel_samsung_sm7150"
 KERNEL_BRANCH="m51"
-KERNEL_DEFCONFIG="a71_defconfig"
+KERNEL_DEFCONFIG="m51_defconfig"
 
 CLANG_URL="https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/4c6fbc28d3b078a5308894fc175f962bb26a5718/clang-r383902b1.tar.gz"
 GCC_AARCH64_URL="https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9"
@@ -21,7 +21,7 @@ GCC_BRANCH="master-kernel-build-2021"
 
 BUILD_USER="mehedihjoy0"
 BUILD_HOST="local-build"
-KERNEL_NAME="a71-kernel"
+KERNEL_NAME="m51-kernel"
 
 # ==============================================================================
 # PATHS
@@ -151,7 +151,7 @@ build_kernel() {
     
     # Build
     print_step "Configuring with ${KERNEL_DEFCONFIG}..."
-    cat arch/arm64/configs/sdmmagpie_defconfig arch/arm64/configs/a71.config > arch/arm64/configs/a71_defconfig
+    cat arch/arm64/configs/sdmmagpie_defconfig arch/arm64/configs/m51.config > arch/arm64/configs/m51_defconfig
     make_kernel "${KERNEL_DEFCONFIG}"
     
     print_step "Compiling with $(nproc) threads..."
@@ -208,7 +208,7 @@ create_flashable_zip() {
     
     # Create zip
     cd "${AK_DIR}"
-    ZIP_NAME="ButterflyKernel_a71-$(date +%Y%m%d-%H%M).zip"
+    ZIP_NAME="ButterflyKernel_m51-$(date +%Y%m%d-%H%M).zip"
     print_step "Creating ${ZIP_NAME}..."
     zip -r9 "${ZIP_NAME}" ./* -x "*.zip"
     
@@ -228,7 +228,7 @@ create_flashable_zip() {
 # MAIN
 # ==============================================================================
 main() {
-    print_header "Butterfly Kernel Build for Samsung Galaxy A71"
+    print_header "Butterfly Kernel Build for Samsung Galaxy M51"
     echo "Start time: $(date)"
     echo ""
     
